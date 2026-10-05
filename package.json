@@ -1,0 +1,54 @@
+{
+  "name": "ufo-cat",
+  "version": "0.0.1",
+  "description": "Professional video surveillance console",
+  "homepage": "https://ufo.cat",
+  "author": {
+    "name": "UFO.Cat",
+    "email": "hello@ufo.cat"
+  },
+  "main": "main.js",
+  "scripts": {
+    "build": "npm run build:icons && npm run build:css",
+    "build:icons": "node ./scripts/build-icons.js",
+    "build:css": "tailwindcss -i ./styles.css -o ./dist/styles.css --minify",
+    "dist:linux": "npm run build && electron-builder --linux deb",
+    "watch:css": "tailwindcss -i ./styles.css -o ./dist/styles.css --watch",
+    "start": "npm run build && electron .",
+    "format": "prettier --write \"*.{html,js,json,css}\" \"scripts/*.js\""
+  },
+  "devDependencies": {
+    "@iconify-json/lucide": "^1.2.140",
+    "electron": "^32.0.0",
+    "electron-builder": "^24.13.3",
+    "prettier": "^3.9.9",
+    "tailwindcss": "^3.4.17"
+  },
+  "build": {
+    "appId": "ufo.cat.security",
+    "productName": "UFO.Cat",
+    "asar": true,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "assets/**/*",
+      "dist/**/*",
+      "app.js",
+      "index.html",
+      "main.js",
+      "preload.js",
+      "package.json"
+    ],
+    "artifactName": "${productName}-${version}-${arch}.${ext}",
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "icon": "assets/icon.png",
+      "category": "Utility",
+      "maintainer": "UFO.Cat <hello@ufo.cat>",
+      "executableName": "ufo-cat-security"
+    }
+  }
+}

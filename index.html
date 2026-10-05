@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#08121d" />
+    <title>UFO.Cat Security</title>
+    <link rel="stylesheet" href="dist/styles.css" />
+  </head>
+  <body>
+    <div class="desktop-app">
+      <aside class="sidebar">
+        <div class="brand">
+          <img src="assets/ufo-cat-logo.svg" alt="UFO.Cat" />
+        </div>
+        <nav class="nav" aria-label="Main navigation">
+          <button class="nav-item active" data-page="dashboard">
+            <span
+              ><svg class="icon" aria-hidden="true">
+                <use href="assets/icons.svg#icon-cctv"></use></svg></span
+            >Live view
+          </button>
+          <button class="nav-item" data-page="settings">
+            <span
+              ><svg class="icon" aria-hidden="true">
+                <use href="assets/icons.svg#icon-settings"></use></svg></span
+            >Settings
+          </button>
+        </nav>
+      </aside>
+      <main class="main">
+        <div class="workplace-tabs" role="tablist" aria-label="Workplaces">
+          <div class="tabs-list" id="workspaceTabs"></div>
+          <button
+            class="new-workspace"
+            id="addWorkspace"
+            title="Add workplace"
+            aria-label="Add workplace"
+          >
+            <svg class="icon" aria-hidden="true">
+              <use href="assets/icons.svg#icon-plus"></use>
+            </svg>
+          </button>
+        </div>
+        <div class="dashboard" id="dashboardPage">
+          <section class="center-column">
+            <div class="feed-grid" id="feeds"></div>
+          </section>
+          <aside class="right-column">
+            <section class="camera-panel">
+              <div class="panel-heading">
+                <div>
+                  <h2>Cameras <span id="cameraCount">0</span></h2>
+                </div>
+                <button class="add-mini" id="addSmall" title="Add camera">
+                  <svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#icon-plus"></use>
+                  </svg>
+                </button>
+              </div>
+              <div class="camera-list" id="cameraList"></div>
+            </section>
+          </aside>
+        </div>
+        <section class="settings-page" id="settingsPage" hidden>
+          <div class="settings-title">
+            <div class="eyebrow"><i></i> PREFERENCES</div>
+            <h1>Settings</h1>
+            <p>Configure video connections and app behavior.</p>
+          </div>
+          <div class="settings-grid">
+            <section class="settings-card">
+              <div class="settings-card-head">
+                <div>
+                  <h2>Video streaming</h2>
+                  <p>Controls RTSP live stream quality and reconnection.</p>
+                </div>
+                <span class="settings-icon"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#icon-radio"></use></svg
+                ></span>
+              </div>
+              <label class="field-label" for="ffmpegPath"
+                >FFmpeg executable</label
+              >
+              <div class="input-with-action">
+                <input id="ffmpegPath" placeholder="ffmpeg" /><button
+                  id="checkFfmpeg"
+                >
+                  Check
+                </button>
+              </div>
+              <small class="field-help" id="ffmpegResult"
+                >FFmpeg is used to decode RTSP video for live display.</small
+              ><label class="field-label" for="streamQuality"
+                >Stream quality</label
+              ><select class="settings-select" id="streamQuality">
+                <option value="low">Low · 640 px, lower bandwidth</option>
+                <option value="balanced">Balanced · 960 px</option>
+                <option value="high">High · 1280 px</option></select
+              ><label class="setting-toggle"
+                ><span
+                  ><strong>Reconnect automatically</strong
+                  ><small
+                    >Retry a stream when its connection drops.</small
+                  ></span
+                ><input type="checkbox" id="autoReconnect" /><i></i
+              ></label>
+            </section>
+            <section class="settings-card">
+              <div class="settings-card-head">
+                <div>
+                  <h2>Camera storage</h2>
+                  <p>Camera details are saved on this computer.</p>
+                </div>
+                <span class="settings-icon"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#icon-hard-drive"></use></svg
+                ></span>
+              </div>
+              <div class="storage-row">
+                <span>Camera configuration</span><strong>Local only</strong>
+              </div>
+              <div class="storage-row">
+                <span>Saved camera count</span
+                ><strong id="settingsCameraCount">0</strong>
+              </div>
+              <div class="settings-note">
+                RTSP addresses and camera names are stored in your local UFO.Cat
+                app data. Stream video is processed locally by FFmpeg.
+              </div>
+              <button class="secondary-button" id="manageCameras">
+                Manage cameras
+                <span
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="assets/icons.svg#icon-arrow-right"></use></svg
+                ></span>
+              </button>
+            </section>
+          </div>
+          <div class="settings-footer">
+            <span id="settingsSaved">Settings are saved automatically.</span
+            ><button class="secondary-button" id="resetSettings">
+              Restore defaults
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div class="toast" id="toast">
+      <span
+        ><svg class="icon" aria-hidden="true">
+          <use href="assets/icons.svg#icon-check"></use></svg
+      ></span>
+      <div>
+        <strong id="toastTitle">Done</strong
+        ><small id="toastText">Action complete.</small>
+      </div>
+      <button id="toastClose" aria-label="Close notification">
+        <svg class="icon" aria-hidden="true">
+          <use href="assets/icons.svg#icon-x"></use>
+        </svg>
+      </button>
+    </div>
+    <div class="modal-backdrop" id="cameraModal">
+      <form class="modal" id="cameraForm">
+        <button
+          class="modal-close"
+          type="button"
+          id="modalClose"
+          aria-label="Close camera dialog"
+        >
+          <svg class="icon" aria-hidden="true">
+            <use href="assets/icons.svg#icon-x"></use>
+          </svg>
+        </button>
+        <div class="modal-mark">
+          <svg class="icon" aria-hidden="true">
+            <use href="assets/icons.svg#icon-plus"></use>
+          </svg>
+        </div>
+        <h2 id="modalTitle">Add a camera</h2>
+        <p id="modalSubtitle">Connect an IP camera or webcam.</p>
+        <label
+          >Camera name<input
+            id="camName"
+            maxlength="80"
+            required
+            placeholder="e.g. West entrance" /></label
+        ><label
+          >Workplace<select
+            id="camWorkspace"
+            class="settings-select"
+          ></select></label
+        ><label
+          >Connection type<select id="cameraType" class="settings-select">
+            <option value="rtsp">IP camera · RTSP stream</option>
+            <option value="webcam">Local webcam</option>
+          </select></label
+        >
+        <div id="rtspFields">
+          <label
+            >RTSP stream URL<input
+              id="camUrl"
+              placeholder="rtsp://192.168.1.10:554/stream1"
+              spellcheck="false" /></label
+          ><small class="field-help"
+            >Credentials in the RTSP URL are stored locally on this
+            computer.</small
+          >
+        </div>
+        <div id="webcamFields" hidden>
+          <label
+            >Webcam device<select id="webcamDevice" class="settings-select">
+              <option value="">Choose a connected webcam</option>
+            </select></label
+          ><button
+            class="secondary-button refresh-devices"
+            type="button"
+            id="refreshDevices"
+          >
+            Refresh devices
+          </button>
+        </div>
+        <p class="form-error" id="formError" role="alert"></p>
+        <div class="modal-actions">
+          <button class="delete-button" type="button" id="deleteCamera" hidden>
+            Delete</button
+          ><span></span
+          ><button class="secondary-button" type="button" id="cancelModal">
+            Cancel</button
+          ><button type="submit" class="add-camera" id="saveCamera">
+            Connect camera
+            <span
+              ><svg class="icon" aria-hidden="true">
+                <use href="assets/icons.svg#icon-arrow-right"></use></svg
+            ></span>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="modal-backdrop" id="workspaceModal">
+      <form class="modal workspace-modal" id="workspaceForm">
+        <button
+          class="modal-close"
+          type="button"
+          id="workspaceModalClose"
+          aria-label="Close workplace dialog"
+        >
+          <svg class="icon" aria-hidden="true">
+            <use href="assets/icons.svg#icon-x"></use>
+          </svg>
+        </button>
+        <div class="modal-mark">
+          <svg class="icon" aria-hidden="true">
+            <use href="assets/icons.svg#icon-folder-plus"></use>
+          </svg>
+        </div>
+        <h2 id="workspaceModalTitle">New workplace</h2>
+        <p id="workspaceModalSubtitle">
+          Create a tab to group cameras by site or area.
+        </p>
+        <label
+          >Workplace name<input
+            id="workspaceName"
+            maxlength="60"
+            required
+            placeholder="e.g. Warehouse"
+        /></label>
+        <p class="form-error" id="workspaceError" role="alert"></p>
+        <div class="modal-actions">
+          <button
+            class="delete-button"
+            type="button"
+            id="deleteWorkspace"
+            hidden
+          >
+            Delete workplace</button
+          ><span></span
+          ><button class="secondary-button" type="button" id="cancelWorkspace">
+            Cancel</button
+          ><button type="submit" class="add-camera" id="saveWorkspace">
+            Create workplace
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="modal-backdrop" id="confirmModal">
+      <div class="modal confirm-modal">
+        <div class="modal-mark danger-mark">
+          <svg class="icon" aria-hidden="true">
+            <use href="assets/icons.svg#icon-circle-alert"></use>
+          </svg>
+        </div>
+        <h2 id="confirmTitle">Delete this camera?</h2>
+        <p id="confirmText">
+          This will remove the saved camera from this computer.
+        </p>
+        <div class="modal-actions">
+          <span></span
+          ><button class="secondary-button" id="cancelDelete">Cancel</button
+          ><button class="danger-button" id="confirmDelete">Delete</button>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>

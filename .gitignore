@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+
+# Generated frontend assets
+dist/
+
+# Electron Builder output
+release/
+out/
+*.AppImage
+*.deb
+*.rpm
+*.snap
+
+# Test and coverage output
+coverage/
+.nyc_output/
+
+# Tool caches
+.cache/
+.eslintcache
+.parcel-cache/
+.vite/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
